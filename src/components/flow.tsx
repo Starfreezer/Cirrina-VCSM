@@ -1,4 +1,4 @@
-import React, {useCallback, createContext, useMemo, useState, useRef} from 'react';
+import React, {useCallback, createContext, useMemo, useState} from 'react';
 import {
     ReactFlow,
     Background,
@@ -37,7 +37,7 @@ const edgeTypes = {
 }
 
 const NODE_HISTORY_LENGTH = 10;
-const currentIndex = useRef<number | undefined>(undefined);
+let currentIndex: number  = -1
 
 const initialNodes: Node<CsmNodeProps>[] = [];
 const initialEdges: Edge<CsmEdgeProps>[] = [];
@@ -77,12 +77,14 @@ export default function Flow() {
         currentIndex
     };
 
-    const updateNodeHistory = useCallback((nodes: Node<CsmNodeProps>[]) => {
+    const updateNodeHistory = useCallback((nodes: Node<CsmNodeProps>[], resetRedo: boolean = false) => {
+
         setNodeHistory(prev => {
-            if (prev.length < NODE_HISTORY_LENGTH) {
-                return [...prev, nodes];
+            const newHistory = resetRedo && currentIndex >= 0 ? [...prev.slice(0, currentIndex + 1)] : prev;
+            if (newHistory.length < NODE_HISTORY_LENGTH) {
+                return [...newHistory, nodes];
             } else {
-                return [...prev.slice(1), nodes];
+                return [...newHistory.slice(1), nodes];
             }
         });
     }, []);
@@ -134,10 +136,10 @@ export default function Flow() {
 
             setNodes(nds => {
                 if (type === 'state-machine-node') {
-                    updateNodeHistory([newNode, ...nds]);
+                    updateNodeHistory([newNode, ...nds], true);
                     return [newNode, ...nds];
                 } else {
-                    updateNodeHistory([...nds, newNode]);
+                    updateNodeHistory([...nds, newNode],true);
                     return [...nds, newNode];
                 }
             });

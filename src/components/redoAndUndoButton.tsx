@@ -12,33 +12,33 @@ export default function RedoAndUndoButton() {
     const context = useContext(ReactFlowContext) as ReactFlowContextProps;
     const { setNodes,
         nodeHistory,
-        stateOrStateMachineService,
-        currentIndex } = context;
+        stateOrStateMachineService} = context;
+    let {currentIndex} = context
 
 
 
     const onUndoClick = useCallback(() => {
 
-        if (currentIndex.current === undefined) {
-            currentIndex.current = nodeHistory.length - 1;
+        console.log(`Entering undo, index ${currentIndex}`);
+
+        if (currentIndex < 0) {
+            console.log("Hi")
+            currentIndex = nodeHistory.length - 1;
         }
 
-        if (currentIndex.current <= 0) {
+        if (currentIndex <= 0) {
             console.log("Beginning of history")
             return;
         }
 
-        currentIndex.current = currentIndex.current - 1;
+        currentIndex = currentIndex - 1;
 
         setNodes((prev) => {
-            if (currentIndex.current !== undefined) {
-                const diff = differenceWith(prev, nodeHistory[currentIndex.current], nodeIsEqual);
+                const diff = differenceWith(prev, nodeHistory[currentIndex], nodeIsEqual);
                 diff.forEach((node) => {
                     stateOrStateMachineService.unregisterName(stateOrStateMachineService.getName(node.data));
                 });
-                return nodeHistory[currentIndex.current];
-            }
-            return prev;
+                return nodeHistory[currentIndex];
         });
 
     }, [nodeHistory, setNodes, stateOrStateMachineService]);
@@ -46,24 +46,24 @@ export default function RedoAndUndoButton() {
 
     const onRedoClick = useCallback(() => {
 
-        if (currentIndex.current === undefined) {
-            currentIndex.current = nodeHistory.length - 1;
+        if (currentIndex < 0) {
+            currentIndex = nodeHistory.length - 1;
         }
 
-        if (currentIndex.current >= nodeHistory.length - 1) {
+        if (currentIndex >= nodeHistory.length - 1) {
             console.log("End of History");
             return;
         }
 
-        currentIndex.current = currentIndex.current + 1;
+        currentIndex = currentIndex + 1;
 
         setNodes((prev) => {
-            if (currentIndex.current !== undefined) {
-                const diff = differenceWith(nodeHistory[currentIndex.current], prev, nodeIsEqual);
+            if (currentIndex !== undefined) {
+                const diff = differenceWith(nodeHistory[currentIndex], prev, nodeIsEqual);
                 diff.forEach((node) => {
                     stateOrStateMachineService.registerName(stateOrStateMachineService.getName(node.data));
                 });
-                return nodeHistory[currentIndex.current];
+                return nodeHistory[currentIndex];
             }
             return prev;
         });

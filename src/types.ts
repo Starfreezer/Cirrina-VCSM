@@ -48,7 +48,7 @@ export type ReactFlowContextProps = {
     nameInput: string;
     setNameInput: React.Dispatch<React.SetStateAction<string>>;
     stateOrStateMachineService: StateOrStateMachineService;
-    currentIndex: React.MutableRefObject<number | undefined>;
+    currentIndex: number;
 }
 
 
