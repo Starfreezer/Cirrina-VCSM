@@ -1,7 +1,7 @@
 //import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome CSS
 import "../css/redoUndoButton.css"
-import {useCallback, useContext, useRef,} from "react";
+import {useCallback, useContext} from "react";
 import {ReactFlowContext} from "./flow.tsx";
 import {ReactFlowContextProps} from "../types.ts";
 import {differenceWith} from "lodash"
@@ -10,9 +10,12 @@ import {nodeIsEqual} from "../utils.tsx"
 
 export default function RedoAndUndoButton() {
     const context = useContext(ReactFlowContext) as ReactFlowContextProps;
-    const { setNodes, nodeHistory, stateOrStateMachineService } = context;
+    const { setNodes,
+        nodeHistory,
+        stateOrStateMachineService,
+        currentIndex } = context;
 
-    const currentIndex = useRef<number | undefined>(undefined);
+
 
     const onUndoClick = useCallback(() => {
 

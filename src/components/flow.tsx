@@ -1,4 +1,4 @@
-import React, { useCallback, createContext, useMemo, useState } from 'react';
+import React, {useCallback, createContext, useMemo, useState, useRef} from 'react';
 import {
     ReactFlow,
     Background,
@@ -37,6 +37,8 @@ const edgeTypes = {
 }
 
 const NODE_HISTORY_LENGTH = 10;
+const currentIndex = useRef<number | undefined>(undefined);
+
 const initialNodes: Node<CsmNodeProps>[] = [];
 const initialEdges: Edge<CsmEdgeProps>[] = [];
 
@@ -72,6 +74,7 @@ export default function Flow() {
         nameInput,
         setNameInput,
         stateOrStateMachineService,
+        currentIndex
     };
 
     const updateNodeHistory = useCallback((nodes: Node<CsmNodeProps>[]) => {
